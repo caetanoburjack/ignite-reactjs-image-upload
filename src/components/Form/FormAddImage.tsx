@@ -12,9 +12,9 @@ interface FormAddImageProps {
 }
 
 interface NewImageData {
-  url: string
-  title: string
-  description: string
+  url: string;
+  title: string;
+  description: string;
 }
 
 export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
@@ -27,13 +27,14 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
     image: {
       required: 'Arquivo obrigatório',
       validate: {
-        lessThan10MB: fileList => fileList[0].size < 10000000 || 'Arquivo muito grande!',
-        acceptedFormats: fileList => acceptedFormatsRegex.test(fileList[0].type) || 'Extensões permitidas: PNG, JPEG E GIF'
-      }
-
+        lessThan10MB: fileList =>
+          fileList[0].size < 10000000 || 'Arquivo muito grande!',
+        acceptedFormats: fileList =>
+          acceptedFormatsRegex.test(fileList[0].type) ||
+          'Extensões permitidas: PNG, JPEG E GIF',
+      },
     },
     title: {
-
       required: 'Título obrigatório',
       minLength: {
         value: 2,
@@ -50,7 +51,6 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
         value: 65,
         message: 'Máximo de 65 caracteres',
       },
-
     },
   };
 
@@ -59,24 +59,18 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
     async (image: NewImageData) => {
       await api.post('/api/images', {
         ...image,
-        url: imageUrl
-      })
+        url: imageUrl,
+      });
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('images')
-      }
+        queryClient.invalidateQueries('images');
+      },
     }
   );
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState,
-    setError,
-    trigger,
-  } = useForm();
+  const { register, handleSubmit, reset, formState, setError, trigger } =
+    useForm();
   const { errors } = formState;
 
   const onSubmit = async (data: NewImageData): Promise<void> => {
@@ -86,31 +80,31 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
         toast({
           status: 'error',
           title: 'Imagem não adicionada',
-          description: 'Aguarde o upload da imagem para poder subir outra.'
-        })
-        return
+          description: 'Aguarde o upload da imagem para poder subir outra.',
+        });
+        return;
       }
       // TODO EXECUTE ASYNC MUTATION
-      await mutation.mutateAsync(data)
+      await mutation.mutateAsync(data);
       // TODO SHOW SUCCESS TOAST
       toast({
         status: 'success',
         title: 'Imagem cadastrada com sucesso!',
-        description: 'Sua imagem já foi cadastrada.'
-      })
+        description: 'Sua imagem já foi cadastrada.',
+      });
     } catch {
       // TODO SHOW ERROR TOAST IF SUBMIT FAILED
       toast({
         status: 'error',
         title: 'Falha no Cadastro!',
-        description: 'Erro! Sua imagem não foi cadastrada.'
-      })
+        description: 'Erro! Sua imagem não foi cadastrada.',
+      });
     } finally {
       // TODO CLEAN FORM, STATES AND CLOSE MODAL
-      reset()
-      setImageUrl('')
-      setLocalImageUrl('')
-      closeModal()
+      reset();
+      setImageUrl('');
+      setLocalImageUrl('');
+      closeModal();
     }
   };
 
