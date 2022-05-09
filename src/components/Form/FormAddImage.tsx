@@ -11,6 +11,12 @@ interface FormAddImageProps {
   closeModal: () => void;
 }
 
+interface NewImageData {
+  url: string
+  title: string
+  description: string
+}
+
 export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
   const [imageUrl, setImageUrl] = useState('');
   const [localImageUrl, setLocalImageUrl] = useState('');
@@ -50,9 +56,16 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
-    // TODO MUTATION API POST REQUEST,
+    async (image: NewImageData) => {
+      await api.post('/api/images', {
+        ...image,
+        url: imageUrl
+      })
+    },
     {
-      // TODO ONSUCCESS MUTATION
+      onSuccess: () => {
+        queryClient.invalidateQueries('images')
+      }
     }
   );
 
@@ -66,15 +79,38 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
   } = useForm();
   const { errors } = formState;
 
-  const onSubmit = async (data: Record<string, unknown>): Promise<void> => {
+  const onSubmit = async (data: NewImageData): Promise<void> => {
     try {
       // TODO SHOW ERROR TOAST IF IMAGE URL DOES NOT EXISTS
+      if (!imageUrl) {
+        toast({
+          status: 'error',
+          title: 'Imagem não adicionada',
+          description: 'Aguarde o upload da imagem para poder subir outra.'
+        })
+        return
+      }
       // TODO EXECUTE ASYNC MUTATION
+      await mutation.mutateAsync(data)
       // TODO SHOW SUCCESS TOAST
+      toast({
+        status: 'success',
+        title: 'Imagem cadastrada com sucesso!',
+        description: 'Sua imagem já foi cadastrada.'
+      })
     } catch {
       // TODO SHOW ERROR TOAST IF SUBMIT FAILED
+      toast({
+        status: 'error',
+        title: 'Falha no Cadastro!',
+        description: 'Erro! Sua imagem não foi cadastrada.'
+      })
     } finally {
       // TODO CLEAN FORM, STATES AND CLOSE MODAL
+      reset()
+      setImageUrl('')
+      setLocalImageUrl('')
+      closeModal()
     }
   };
 
