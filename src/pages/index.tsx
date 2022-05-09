@@ -58,9 +58,9 @@ export default function Home(): JSX.Element {
     return <Error />;
   }
   return (
-    <>
+    <Box minW='320px'>
       <Header />
-      <Box maxW={1120} px={20} mx="auto" my={20}>
+      <Box maxW={1120} px={5} mx="auto" my={5}>
         <CardList cards={formattedData} />
         {
           hasNextPage && (
@@ -69,6 +69,6 @@ export default function Home(): JSX.Element {
             </Button>)
         }
       </Box>
-    </>
+    </Box>
   );
 }
