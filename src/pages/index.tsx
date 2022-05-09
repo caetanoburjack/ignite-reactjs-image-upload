@@ -1,13 +1,12 @@
 import { Button, Box } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useInfiniteQuery } from 'react-query';
-
 import { Header } from '../components/Header';
 import { CardList } from '../components/CardList';
 import { api } from '../services/api';
 import { Loading } from '../components/Loading';
 import { Error } from '../components/Error';
-import { string } from 'yup';
+
 
 interface Image {
   title: string
@@ -46,10 +45,10 @@ export default function Home(): JSX.Element {
   });
 
   const formattedData = useMemo(() => {
-    const formattedData = data?.pages.flatMap(imageData => {
+    const formatted = data?.pages.flatMap(imageData => {
       return imageData.data.flat()
     })
-    return formattedData
+    return formatted
   }, [data]);
 
   // TODO RENDER LOADING SCREEN
